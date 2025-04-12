@@ -1,4 +1,5 @@
 import streamlit as st
+st.set_page_config(page_title="SUMMARY.AI", layout="wide")
 import os
 import tempfile
 from datetime import datetime
@@ -10,6 +11,70 @@ load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 GOOGLE_API_KEY2 = os.getenv("GOOGLE_API_KEY2")
 GOOGLE_CSE_ID = os.getenv("GOOGLE_CSE_ID")
+# ---------------------------
+# Custom CSS Injection
+# ---------------------------
+st.markdown("""
+    <style>
+    /* Background and font styling for the body */
+    body {
+        background-color: #f5f5f5;
+    }
+    /* Style for the big title */
+    .big-title {
+        font-size: 24px;
+        font-weight: 350;
+        text-align: center;
+        color: #00000;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .title {
+        font-size: 48px;
+        font-weight: bold;
+        text-align: center;
+        color: #4CAF50;
+        margin-top: 30px;
+        margin-bottom: 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(to right, #4CAF50, #81C784);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+            
+    .doc-title {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2E8B57;
+        margin-top: 20px;
+    }
+        
+    .best-sentence, .summary {
+        font-size: 16px;
+        margin: 8px 0;
+        padding-left: 10px;
+    }
+        
+    .highlight {
+        font-weight: bold;
+        color: #FF9800;
+    }
+            
+    * {
+        font-family: 'Courier New', Courier, monospace;
+    }
+    .css-18e3th9 { padding: 0 !important; }
+    .css-1d391kg { background-color: #F8F8F8; border-right: 1px solid #ccc; }
+    .history-heading { font-size: 1.5em; margin-top: 0px; margin-bottom: 0.5em; text-align: left; border-bottom: 2px solid #ccc; }
+    .response-container { border: 2px solid #ccc; border-radius: 5px; padding: 1em; min-height: 300px; margin-bottom: 1em; }
+    .footer-container { display: flex; align-items: center; justify-content: flex-start; gap: 10px; margin-top: 1em; }
+    .button-style { background-color: #2B2B2B; color: white; padding: 0.5em 1em; text-transform: uppercase; border-radius: 5px; border: none; cursor: pointer; }
+    .button-style:hover { background-color: #555; }
+    .css-1c2dlow { border: 2px solid #ccc !important; margin-bottom: 10px; }
+    .css-1outpf7 { background-color: #000000 !important; }
+    </style>
+""", unsafe_allow_html=True)
 
 # NLP + ML Libraries
 import nltk
@@ -42,7 +107,6 @@ except LookupError:
 # ---------------------------
 # Setup
 # ---------------------------
-st.set_page_config(page_title="SUMMARY.AI", layout="wide")
 pdf_folder_path = r"C:\Users\Asus\OneDrive\Desktop\AI Model\pdf_files"
 os.makedirs(pdf_folder_path, exist_ok=True)
 
@@ -57,7 +121,8 @@ def translate_text(text, dest_lang):
         return f"Translation Error: {e}"
 
 translator = Translator()
-
+st.markdown('<div class="title">SUMMARY.AI</div>', unsafe_allow_html=True)
+st.markdown('<div class="big-title">📚 Smart AI-Powered Document Assistant</div>', unsafe_allow_html=True)
 # Language dropdown and mapping
 lang_option = st.selectbox("Select Output Language", ["English", "Spanish", "French", "Hindi", "Chinese"])
 output_lang_map = {
@@ -164,7 +229,6 @@ topic_labels = KMeans(n_clusters=n_clusters, random_state=42).fit(doc_embeddings
 # ---------------------------
 # Fun & Vibrant UI Styling
 # ---------------------------
-st.markdown('<div class="big-title">📚 Smart AI-Powered Document Assistant</div>', unsafe_allow_html=True)
 st.markdown("✨ **Explore, search, and chat with your files like never before!**")
 with st.expander("💡 Tips for Fun Exploration"):
     st.write("""
@@ -173,11 +237,6 @@ with st.expander("💡 Tips for Fun Exploration"):
         - Jump into **Conversation Mode** to ask follow-up questions; AI will let you know if it's off-topic.
         - Upload files on the sidebar and start your exploration!
     """)
-
-lang_option = st.selectbox("🌐 Language (Coming Soon)", ["English", "Spanish", "French"])
-voice_query = st.button("🎙 Try Voice Query (Coming Soon)")
-if voice_query:
-    st.info("🎤 Voice input is in the works — stay tuned!")
 
 st.markdown("### 🧭 Choose Your Action")
 
@@ -263,7 +322,6 @@ if query:
     # ---- Conversation Mode: Follow-Up using LangChain and Cosine Similarity ----
     if st.checkbox("Enter Conversation Mode"):
         st.subheader("Conversation Mode")
-        memory_length = st.slider("Conversation Memory Length (Number of messages)", min_value=1, max_value=20, value=5)
         from langchain.memory import ConversationBufferMemory
         from langchain.chains import ConversationChain
         from langchain_google_genai.chat_models import ChatGoogleGenerativeAI
@@ -327,4 +385,3 @@ if query:
     st.subheader("🗣 Previous Queries")
     for i, prev_q in enumerate(reversed(st.session_state.get("prev_queries", [])[:5]), 1):
         st.markdown(f"{i}. {prev_q}")
-st.info("TXT support, drag & drop, and more intelligent clustering are live! 🎉 More coming soon!")
